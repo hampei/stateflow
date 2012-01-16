@@ -36,6 +36,14 @@ module Stateflow
         end
       end
     end
+
+    def machine
+      if @machine
+        @machine
+      elsif superclass.respond_to?(:machine)
+        superclass.machine
+      end
+    end
   end
   
   module InstanceMethods
