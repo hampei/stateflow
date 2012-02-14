@@ -1,3 +1,24 @@
+= ALERT!!!
+
+This version of stateflow has not been tested enough for use by anyone but the hacker! Unless you really want the feature and are willing to risk everything to get it!
+
+Having said that, it should be completely backward compatible, unless you were in the habit of defining whole new stateflows in subclasses.
+The tests pass and new tests have been added.
+
+Problems might arise from the fact that the 'transitions :from => any' is now handled by handling a special case transition.from == [], instead of requesting all states from the object. This solved the problems that events kept a reference to the old machine and the fact that new states might be added now.
+
+This version has been altered to allow a subclass to add to a stateflow, by:
+
+- adding new events, 
+- adding new transitions to existing events
+- adding new states
+- adding/replacing the enter and exit methods of existing states.
+
+Just add another 'stateflow do' block in the subclass and continue as normal. Keeping in mind what state was in the superclass and how you might really screw things up.
+
+Hampei.
+
+
 = Stateflow
 
 == TODO
