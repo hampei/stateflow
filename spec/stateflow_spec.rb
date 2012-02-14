@@ -344,3 +344,58 @@ describe Stateflow do
   end
 end
 
+class SubCar < Car
+  def last_result; @lr; end
+  def last_result=(n); @lr = n; end
+  stateflow do
+    state :driving do 
+      exit do |car|
+        car.last_result = "Exiting driving"
+      end
+    end
+    
+    state :starting do
+      enter do |car|
+        car.last_result = "Starting car"
+      end
+    end
+    
+    event :start do
+      transitions :from => :parked, :to => :starting
+    end
+    
+    event :drive do
+      transitions :from => :driving, :to => :starting
+    end
+  end
+end
+
+describe "subclass with extra stateflow" do
+  before(:each) do
+    @car = SubCar.new
+  end
+
+  it "should still call the old enter method on the driving state" do
+    @car.machine.states[:driving].should_receive(:execute_action).with(:enter, @car)
+    @car.drive!
+  end
+  
+  it 'should call the new exit method on driving state' do
+    @car.drive!
+    @car.park!
+    @car.last_result.should == "Exiting driving"
+  end
+  
+  it 'should have the new start event putting in the new starting state' do
+    @car.start!
+    @car.last_result.should == "Starting car"
+    @car.state.should == 'starting'
+  end
+  
+  it 'should add new transitions to old events (driving -> starting)' do
+    @car.drive!
+    @car.drive!
+    @car.state.should == 'starting'
+  end
+end
+

@@ -18,15 +18,22 @@ module Stateflow
     
     def state(*names, &options)
       names.each do |name|
-        state = Stateflow::State.new(name, &options)
-        @initial_state = state if @states.empty? || @initial_state_name == name
-        @states[name.to_sym] = state
+        unless @states[name.to_sym]
+          state = Stateflow::State.new(name, &options)
+          @initial_state = state if @states.empty? || @initial_state_name == name
+          @states[name.to_sym] = state
+        else
+          @states[name.to_sym].instance_eval(&options) if block_given?
+        end
       end
     end
     
     def event(name, &transitions)
-      event = Stateflow::Event.new(name, self, &transitions)
-      @events[name.to_sym] = event
+      unless @events[name.to_sym]
+        @events[name.to_sym] = Stateflow::Event.new(name, &transitions)
+      else
+        @events[name.to_sym].instance_eval(&transitions)
+      end
     end
   end
 end

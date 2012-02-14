@@ -2,16 +2,15 @@ module Stateflow
   class Event
     attr_accessor :name, :transitions, :machine
     
-    def initialize(name, machine=nil, &transitions)
+    def initialize(name, &transitions)
       @name = name
-      @machine = machine
       @transitions = Array.new
       
       instance_eval(&transitions)
     end
     
     def fire(current_state, klass, options)
-      transition = @transitions.select{ |t| t.from.include? current_state.name }.first
+      transition = @transitions.select{ |t| t.from.include?(current_state.name) or t.from == any }.first
       raise NoTransitionFound.new("No transition found for event #{@name}") if transition.nil?
       
       return false unless transition.can_transition?(klass)
@@ -34,7 +33,7 @@ module Stateflow
     end
     
     def any
-      @machine.states.keys
+      []
     end
   end
 end

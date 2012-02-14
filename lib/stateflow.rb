@@ -17,7 +17,11 @@ module Stateflow
     attr_reader :machine
     
     def stateflow(&block)
-      @machine = Stateflow::Machine.new(&block)
+      unless machine
+        @machine = Stateflow::Machine.new(&block)
+      else
+        @machine.instance_eval(&block)
+      end
       
       @machine.states.values.each do |state|
         state_name = state.name
@@ -41,7 +45,7 @@ module Stateflow
       if @machine
         @machine
       elsif superclass.respond_to?(:machine)
-        superclass.machine
+        @machine = superclass.machine.dup
       end
     end
   end
