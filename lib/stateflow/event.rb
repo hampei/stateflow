@@ -23,6 +23,8 @@ module Stateflow
       new_state.execute_action(:enter, klass)
 
       klass.set_current_state(new_state, options)
+      
+      new_state.execute_action(:after_enter, klass)
       true
     end
     

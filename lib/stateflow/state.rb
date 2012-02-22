@@ -13,6 +13,10 @@ module Stateflow
       (@options[:enter] ||= []) << (method.nil? ? block : method)
     end
     
+    def after_enter(method = nil, &block)
+      (@options[:after_enter] ||= []) << (method.nil? ? block : method)
+    end
+    
     def exit(method = nil, &block)
       (@options[:exit] ||= []) << (method.nil? ? block : method)
     end

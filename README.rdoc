@@ -16,6 +16,11 @@ This version has been altered to allow a subclass to add to a stateflow, by:
 
 Just add another 'stateflow do' block in the subclass and continue as normal. Keeping in mind what state was in the superclass and how you might really screw things up.
 
+version: 0.4.2.HH.4:
+
+Added after_enter callback to states. 
+This is called after the state has actually changed. In the case of a bang method it is also called after the model was saved. This is useful in cases where the callback calls other functions that expect the object to be in the new state already. 
+
 Hampei.
 
 

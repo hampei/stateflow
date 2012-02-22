@@ -25,13 +25,9 @@ class Car
     initial :parked
 
     state :parked do
-      enter do
-        "Entering parked"
-      end
+      enter :enter_parked
 
-      exit do
-        "Exiting parked"
-      end
+      exit :exit_parked
     end
 
     state :driving do
@@ -48,6 +44,9 @@ class Car
       transitions :from => :driving, :to => :parked
     end
   end
+  
+  def enter_parked;end
+  def exit_parked;end
 end
 
 class Bob
@@ -247,8 +246,9 @@ describe Stateflow do
         @car.drive!
       end
 
-      it "should call the enter state before filter on the entering new state" do
+      it "should call the enter and after_enter state before filter on the entering new state" do
         @car.machine.states[:driving].should_receive(:execute_action).with(:enter, @car)
+        @car.machine.states[:driving].should_receive(:execute_action).with(:after_enter, @car)
         @car.drive!
       end
     end
@@ -375,8 +375,12 @@ describe "subclass with extra stateflow" do
     @car = SubCar.new
   end
 
+  it "should have old initial state" do
+    @car.parked?.should be_true
+  end
+
   it "should still call the old enter method on the driving state" do
-    @car.machine.states[:driving].should_receive(:execute_action).with(:enter, @car)
+    @car.should_receive(:exit_parked)
     @car.drive!
   end
   
